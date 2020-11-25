@@ -9,14 +9,29 @@ def initArr():
         arr[i] = random.randint(1, 100)
     return arr
 
-arr = initArr()
-x = len(arr)
-
 def swap(A, i, j):
     a = A[j]
     A[j] = A[i]
     A[i] = a
     # also in python A[i],A[j]=A[j],A[i]
+
+
+def quickSort(arr,p,q):
+    if p >= q:
+        return
+    piv = arr[q]
+    pivotIdx = p
+    for i in range(p, q):
+        if arr[i] < piv:
+            swap(arr,i,pivotIdx)
+            pivotIdx += 1
+        yield arr
+    swap(arr, q, pivotIdx)
+    yield arr
+
+    yield from quickSort(arr,p,pivotIdx-1)
+    yield from quickSort(arr,pivotIdx+1,q)
+
 
 def insertionSort(arr):
     if(len(arr)==1):
@@ -29,12 +44,9 @@ def insertionSort(arr):
             yield arr
 
 
-# fig = plt.figure()
-# ax = fig.add_axes([0, 0, 1, 1])
-# ax.bar(x, arr)
-
+arr = initArr()
 fig, ax = plt.subplots()
-ax.set_title("Sorting Visualizer :)")
+ax.set_title("Sort Visualizer :)")
 bar_rect = ax.bar(range(len(arr)), arr, align='edge')
 text = ax.text(0.02, 0.95, "", transform=ax.transAxes)
 
@@ -45,7 +57,7 @@ def update_plot(arr, rect, epochs):
     epochs[0] += 1
     text.set_text("No.of operations :{}".format(epochs[0]))
 
-
-algorithm = insertionSort(arr)
+# algorithm = insertionSort(arr)
+algorithm = quickSort(arr, 0, len(arr) - 1)
 anima = anim.FuncAnimation(fig, func=update_plot, fargs=(bar_rect, epochs), frames=algorithm, interval=1, repeat=False)
 plt.show()
